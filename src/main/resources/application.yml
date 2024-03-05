@@ -1,0 +1,14 @@
+# Настройки для PostgreSQL
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/shoesdb
+    username: postgres
+    password: password
+
+  # Настройки Hibernate
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
