@@ -1,7 +1,11 @@
 package com.shoesapp.role.entity;
 
+import com.shoesapp.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Data;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Entity

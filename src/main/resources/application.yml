@@ -4,11 +4,15 @@ spring:
     url: jdbc:postgresql://localhost:5432/shoesdb
     username: postgres
     password: password
-
   # Настройки Hibernate
   jpa:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
     hibernate:
       ddl-auto: update
+    show-sql: true
+
+project:
+  image: src/main/resources/static/

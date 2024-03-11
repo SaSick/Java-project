@@ -24,8 +24,6 @@ public class User {
     private String password;
     private String phoneNumber;
 
-    private Enum<RoleType> typeEnum;
-
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     Set<Role> roles = new HashSet<>();
