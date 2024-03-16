@@ -1,4 +1,4 @@
-package com.shoesapp.product.exception;
+package com.shoesapp.exception;
 
 public class ResourceNotFoundException extends RuntimeException {
     public ResourceNotFoundException(String message){

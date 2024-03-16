@@ -1,11 +1,9 @@
 package com.shoesapp.role.entity;
 
-import com.shoesapp.user.entity.User;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Data;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Data
 @Entity

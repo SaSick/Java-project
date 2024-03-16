@@ -10,21 +10,24 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/products")
+@RequestMapping("/api")
 public class ProductController {
 
     private final ProductService productService;
 
-    @GetMapping
-    public ProductResponse<Product> findAll(
+    @GetMapping("/products")
+    public ProductResponse<Product> getAllProducts(
             @RequestParam(required = false, defaultValue = "0") int page,
             @RequestParam(required = false, defaultValue = "10") int size
     )
     {
-        Page <Product> pagedResponse = productService.findAll(PageRequest.of(page, size));
+        Page <Product> pagedResponse = productService.getAllProducts(PageRequest.of(page, size));
 
         ProductResponse<Product> productResponse = new ProductResponse<>();
 
@@ -34,28 +37,38 @@ public class ProductController {
         return productResponse;
     }
 
-    @PostMapping
-    public ResponseEntity<ProductDTO> createProduct(
+    @PostMapping("/products")
+    public ResponseEntity<ProductDTO> addProduct(
         @RequestBody ProductDTO productDTO
     ){
-        ProductDTO createdProduct = productService.createProduct(productDTO);
+        ProductDTO createdProduct = productService.addProduct(productDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdProduct);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/products/{productId}")
     public ResponseEntity<ProductDTO> deleteProduct(
-            @PathVariable("id") Long productId
+            @PathVariable("productId") Long productId
     ){
         productService.deleteProduct(productId);
         return ResponseEntity.ok().build();
     }
 
-//    @PutMapping("/{id}")
-//    public ResponseEntity<ProductDTO> updateProduct(
-//            @PathVariable("id") Long productId
-//
-//    ){
-//        productService.updateProduct(productId);
-//        return ResponseEntity.ok().build();
-//    }
+    @PutMapping("/products/{productId}")
+    public ResponseEntity<ProductDTO> updateProduct(
+            @PathVariable("productId") Long productId,
+            @RequestBody ProductDTO productDTO
+
+    ){
+        productService.updateProduct(productId, productDTO);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/products/{productId}/image")
+    public ResponseEntity<ProductDTO> updateProductImage(
+            @PathVariable("productId") Long productId,
+            @RequestParam("image")MultipartFile image
+            ) throws IOException {
+        productService.updateProductImage(productId, image);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
+    }
 }
