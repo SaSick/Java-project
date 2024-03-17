@@ -50,8 +50,8 @@ public class AddressServiceImpl implements AddressService {
 
 
     public String deleteAddressById(Long addressId) {
-        findById(addressId);
-        addressRepository.deleteById(addressId);
+        Address addressFromDB = findById(addressId);
+        addressRepository.delete(addressFromDB);
         return "Address with ID: " + addressId + " deleted successfully!";
     }
 

@@ -1,4 +1,4 @@
-package com.shoesapp.product.repositories;
+package com.shoesapp.product.repository;
 
 import com.shoesapp.product.entity.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
