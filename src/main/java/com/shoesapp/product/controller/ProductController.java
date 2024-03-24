@@ -37,11 +37,11 @@ public class ProductController {
         return productResponse;
     }
 
-    @PostMapping("/products")
+    @PostMapping("/{productId}/products")
     public ResponseEntity<ProductDTO> addProduct(
-        @RequestBody ProductDTO productDTO
+        @RequestBody ProductDTO productDTO, @PathVariable("productId") Long productId
     ){
-        ProductDTO createdProduct = productService.addProduct(productDTO);
+        ProductDTO createdProduct = productService.addProduct(productDTO, productId);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdProduct);
     }
 
@@ -59,8 +59,8 @@ public class ProductController {
             @RequestBody ProductDTO productDTO
 
     ){
-        productService.updateProduct(productId, productDTO);
-        return ResponseEntity.ok().build();
+        ProductDTO updatedProduct = productService.updateProduct(productId, productDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(updatedProduct);
     }
 
     @PutMapping("/products/{productId}/image")
@@ -68,7 +68,7 @@ public class ProductController {
             @PathVariable("productId") Long productId,
             @RequestParam("image")MultipartFile image
             ) throws IOException {
-        productService.updateProductImage(productId, image);
-        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
+        ProductDTO updatedProductImage = productService.updateProductImage(productId, image);
+        return ResponseEntity.status(HttpStatus.OK).body(updatedProductImage);
     }
 }

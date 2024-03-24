@@ -1,11 +1,11 @@
-package com.shoesapp.address.dto;
+package com.shoesapp.order.dto;
 
 import lombok.Data;
 
 import java.util.List;
 
 @Data
-public class AddressResponse<T> {
+public class OrderResponse<T> {
     private List<T> data;
     private long total;
 }

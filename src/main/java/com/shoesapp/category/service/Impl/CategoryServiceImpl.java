@@ -1,4 +1,4 @@
-package com.shoesapp.category.service.Impl;
+package com.shoesapp.category.service.impl;
 
 import com.shoesapp.category.dto.CategoryDTO;
 import com.shoesapp.category.entity.Category;

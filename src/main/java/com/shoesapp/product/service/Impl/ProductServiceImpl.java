@@ -1,8 +1,11 @@
-package com.shoesapp.product.service.Impl;
+package com.shoesapp.product.service.impl;
 
+import com.shoesapp.category.entity.Category;
+import com.shoesapp.category.repostirory.CategoryRepository;
+import com.shoesapp.exception.APIException;
+import com.shoesapp.exception.ResourceNotFoundException;
 import com.shoesapp.product.dto.ProductDTO;
 import com.shoesapp.product.entity.Product;
-import com.shoesapp.exception.ResourceNotFoundException;
 import com.shoesapp.product.file_service.FileService;
 import com.shoesapp.product.repository.ProductRepository;
 import com.shoesapp.product.service.ProductService;
@@ -15,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -22,6 +26,8 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
     private final FileService fileService;
+    private final CategoryRepository categoryRepository;
+
 
     private final ModelMapper mapper;
 
@@ -33,10 +39,38 @@ public class ProductServiceImpl implements ProductService {
     }
 
 
-    public ProductDTO addProduct(ProductDTO productDTO) {
+    public ProductDTO addProduct(ProductDTO productDTO, Long categoryId) {
         Product product = mapper.map(productDTO, Product.class);
-        productRepository.save(product);
-        return mapper.map(product, ProductDTO.class);
+        Category category = categoryRepository.findById(categoryId)
+                        .orElseThrow(() -> new ResourceNotFoundException("Product with Id " + categoryId + " not found!"));
+
+        boolean isProductNotPresent = true;
+
+        List<Product> products = category.getProducts();
+        for (Product value : products) {
+            if (value.getProductName().equals(product.getProductName()) &&
+                    value.getDescription().equals(product.getDescription())) {
+                isProductNotPresent = false;
+                break;
+
+            }
+        }
+
+        if(isProductNotPresent){
+            product.setImage("default.png");
+            product.setCategory(category);
+
+            double specialPrice = product.getPrice() - ((product.getDiscount() * 0.01) * product.getPrice());
+            product.setSpecialPrice(specialPrice);
+
+            productRepository.save(product);
+            return mapper.map(product, ProductDTO.class);
+
+        } else {
+            throw new APIException("Product already exists!");
+        }
+
+
     }
 
     public String deleteProduct(Long productId) {
@@ -48,16 +82,24 @@ public class ProductServiceImpl implements ProductService {
 
     public ProductDTO updateProduct(Long productId, ProductDTO productDTO) {
         Product productFromDB = findById(productId);
-        productFromDB.setProductId(productId);
-        productFromDB.setProductName(productDTO.getProductName());
+
+        if (productFromDB == null) {
+            throw new APIException("Product not found with productId: " + productId);
+        }
+
         productFromDB.setImage(productDTO.getImage());
-        productFromDB.setDescription(productDTO.getDescription());
-        productFromDB.setQuantity(productDTO.getQuantity());
-        productFromDB.setDiscount(productDTO.getDiscount());
-        productFromDB.setPrice(productDTO.getPrice());
-        productFromDB.setSpecialPrice(productDTO.getSpecialPrice());
-        productRepository.save(productFromDB);
-        return mapper.map(productFromDB, ProductDTO.class);
+        productFromDB.setProductId(productId);
+        productFromDB.setCategory(productFromDB.getCategory());
+
+        double specialPrice = productFromDB.getPrice() - ((productFromDB.getDiscount() * 0.01) * productFromDB.getPrice());
+        productFromDB.setSpecialPrice(specialPrice);
+
+        Product savedProduct = productRepository.save(productFromDB);
+
+
+        return mapper.map(savedProduct, ProductDTO.class);
+
+
     }
 
 

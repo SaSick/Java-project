@@ -18,8 +18,8 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long userId;
-    private String name;
-    private String surname;
+    private String firstname;
+    private String lastname;
     private String email;
     private String password;
     private String phoneNumber;
@@ -37,6 +37,6 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @MapKey(name = "reviewDate")
-    private Map<LocalDate, Review> reviewMap = new HashMap<>();
+    private List<Review> reviewMap = new ArrayList<>();
 
 }

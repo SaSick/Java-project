@@ -1,15 +1,13 @@
 package com.shoesapp.address.controller;
 
 import com.shoesapp.address.dto.AddressDTO;
-import com.shoesapp.address.dto.AddressResponse;
-import com.shoesapp.address.entity.Address;
 import com.shoesapp.address.service.AddressService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,18 +25,11 @@ public class AddressController {
     }
 
     @GetMapping("/addresses")
-    public AddressResponse<Address> getAllAddresses(
-            @RequestParam(required = false, defaultValue = "0") int page,
-            @RequestParam(required = false, defaultValue = "10") int size
+    public ResponseEntity<List<AddressDTO>> getAllAddresses(
     ){
-        Page<Address> pagedResponse = addressService.getAllAddresses(PageRequest.of(page, size));
 
-        AddressResponse<Address> addressResponse = new AddressResponse<>();
-
-        addressResponse.setData(pagedResponse.getContent());
-        addressResponse.setTotal(pagedResponse.getTotalElements());
-
-        return addressResponse;
+        List<AddressDTO> addressesDTO = addressService.getAllAddresses();
+        return ResponseEntity.status(HttpStatus.OK).body(addressesDTO);
     }
 
     @GetMapping("/address/{addressId}")

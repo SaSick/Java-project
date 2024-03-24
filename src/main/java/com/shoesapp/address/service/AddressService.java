@@ -5,11 +5,13 @@ import com.shoesapp.address.entity.Address;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
+import java.util.List;
+
 public interface AddressService {
 
     AddressDTO createAddress(AddressDTO addressDTO);
 
-    Page<Address> getAllAddresses(PageRequest of);
+    List<AddressDTO> getAllAddresses();
 
     AddressDTO getAddressById(Long addressId);
 

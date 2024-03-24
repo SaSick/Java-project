@@ -12,7 +12,7 @@ public interface ProductService {
 
     Page<Product> getAllProducts(PageRequest of);
 
-    ProductDTO addProduct(ProductDTO productDTO);
+    ProductDTO addProduct(ProductDTO productDTO, Long productId);
 
     String deleteProduct(Long productId);
 
@@ -20,6 +20,6 @@ public interface ProductService {
 
     ProductDTO updateProductImage(Long productId, MultipartFile image) throws IOException;
 
-//    String updateProduct(Long productId);
+
 
 }
