@@ -1,5 +1,9 @@
 package com.shoesapp.product.service.impl;
 
+import com.shoesapp.cart.dto.CartDTO;
+import com.shoesapp.cart.entity.Cart;
+import com.shoesapp.cart.repository.CartRepository;
+import com.shoesapp.cart.service.CartService;
 import com.shoesapp.category.entity.Category;
 import com.shoesapp.category.repostirory.CategoryRepository;
 import com.shoesapp.exception.APIException;
@@ -27,6 +31,8 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final FileService fileService;
     private final CategoryRepository categoryRepository;
+    private final CartRepository cartRepository;
+    private final CartService cartService;
 
 
     private final ModelMapper mapper;
@@ -34,8 +40,10 @@ public class ProductServiceImpl implements ProductService {
     @Value("${project.image}")
     private String path;
 
-    public Page<Product> getAllProducts(PageRequest pageRequest) {
-        return productRepository.findAll(pageRequest);
+
+    public Page<ProductDTO> getAllProducts(PageRequest pageRequest) {
+        Page<Product> products = productRepository.findAll(pageRequest);
+        return products.map(product -> mapper.map(product, ProductDTO.class));
     }
 
 
@@ -75,7 +83,13 @@ public class ProductServiceImpl implements ProductService {
 
     public String deleteProduct(Long productId) {
         Product product = findById(productId);
+
+        List<Cart> carts = cartRepository.findCartsByProductId(productId);
+
+        carts.forEach(cart -> cartService.deleteProductFromCart(cart.getCartId(), productId));
+
         productRepository.delete(product);
+
         return "Product with ID: " + productId + " deleted successfully!";
     }
 
@@ -87,27 +101,53 @@ public class ProductServiceImpl implements ProductService {
             throw new APIException("Product not found with productId: " + productId);
         }
 
-        productFromDB.setImage(productDTO.getImage());
+        productFromDB.setImage(productFromDB.getImage());
         productFromDB.setProductId(productId);
         productFromDB.setCategory(productFromDB.getCategory());
+        productFromDB.setProductName(productDTO.getProductName());
+        productFromDB.setDescription(productDTO.getDescription());
+        productFromDB.setDiscount(productDTO.getDiscount());
+        productFromDB.setQuantity(productDTO.getQuantity());
+        productFromDB.setPrice(productDTO.getPrice());
+
 
         double specialPrice = productFromDB.getPrice() - ((productFromDB.getDiscount() * 0.01) * productFromDB.getPrice());
         productFromDB.setSpecialPrice(specialPrice);
 
         Product savedProduct = productRepository.save(productFromDB);
 
+        List<Cart> carts = cartRepository.findCartsByProductId(productId);
+        List<CartDTO> cartDTOS = carts.stream().map(cart -> {
+            CartDTO cartDTO = mapper.map(cart, CartDTO.class);
+
+            List<ProductDTO> productDTOs = cart.getCartItems().stream()
+                    .map(p -> mapper.map(p.getProduct(), ProductDTO.class)).toList();
+
+            cartDTO.setProductDTOS(productDTOs);
+
+            return cartDTO;
+        }).toList();
+
+        cartDTOS.forEach(cart -> cartService.updateProductInCart(cart.getCartId(), productId));
+
 
         return mapper.map(savedProduct, ProductDTO.class);
-
 
     }
 
 
     public ProductDTO updateProductImage(Long productId, MultipartFile image) throws IOException {
         Product productFromDB = findById(productId);
+        if(productFromDB == null){
+            throw new APIException("Product not found with Id: " + productId);
+        }
+
         String filename = fileService.uploadImage(path, image);
+
         productFromDB.setImage(filename);
+
         productRepository.save(productFromDB);
+
         return mapper.map(productFromDB, ProductDTO.class);
     }
 

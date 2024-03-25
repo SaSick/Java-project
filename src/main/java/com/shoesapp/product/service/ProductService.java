@@ -10,7 +10,7 @@ import java.io.IOException;
 
 public interface ProductService {
 
-    Page<Product> getAllProducts(PageRequest of);
+    Page<ProductDTO> getAllProducts(PageRequest of);
 
     ProductDTO addProduct(ProductDTO productDTO, Long productId);
 

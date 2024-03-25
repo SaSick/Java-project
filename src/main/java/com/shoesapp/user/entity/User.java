@@ -6,6 +6,9 @@ import com.shoesapp.cart.entity.Cart;
 import com.shoesapp.review.entity.Review;
 import com.shoesapp.role.entity.Role;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -18,11 +21,25 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long userId;
-    private String firstname;
-    private String lastname;
+
+    @Size(min = 5, max = 20, message = "First Name must be between 5 and 30 characters long")
+    @Pattern(regexp = "^[a-zA-Z]*$", message = "First Name must not contain numbers or special characters")
+    private String firstName;
+
+    @Size(min = 5, max = 20, message = "Last Name must be between 5 and 30 characters long")
+    @Pattern(regexp = "^[a-zA-Z]*$", message = "Last Name must not contain numbers or special characters")
+    private String lastName;
+
+    @Email
+    @Column(unique = true, nullable = false)
     private String email;
-    private String password;
+
+    @Size(min = 10, max = 10, message = "Phone Number must be exactly 10 digits long")
+    @Pattern(regexp = "^\\d{10}$", message = "Phone Number must contain only Numbers")
     private String phoneNumber;
+
+    private String password;
+
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))

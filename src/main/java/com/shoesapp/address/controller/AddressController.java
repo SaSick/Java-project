@@ -2,6 +2,7 @@ package com.shoesapp.address.controller;
 
 import com.shoesapp.address.dto.AddressDTO;
 import com.shoesapp.address.service.AddressService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,7 @@ public class AddressController {
 
     @PostMapping("/address")
     public ResponseEntity<AddressDTO> createAddress(
-            @RequestBody AddressDTO addressDTO
+           @Valid @RequestBody AddressDTO addressDTO
     ){
         AddressDTO createdAddress = addressService.createAddress(addressDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdAddress);
@@ -32,7 +33,7 @@ public class AddressController {
         return ResponseEntity.status(HttpStatus.OK).body(addressesDTO);
     }
 
-    @GetMapping("/address/{addressId}")
+    @GetMapping("/addresses/{addressId}")
     public ResponseEntity<AddressDTO> getAddress(
             @PathVariable("addressId") Long addressId
     ){
@@ -40,7 +41,7 @@ public class AddressController {
         return ResponseEntity.status(HttpStatus.OK).body(addressDTO);
     }
 
-    @PutMapping("/address/{addressId}")
+    @PutMapping("/addresses/{addressId}")
     public ResponseEntity<AddressDTO> updateAddress(
             @PathVariable("addressId") Long addressId,
             @RequestBody AddressDTO addressRequest
@@ -49,7 +50,7 @@ public class AddressController {
         return ResponseEntity.status(HttpStatus.OK).body(addressDTO);
     }
 
-    @DeleteMapping("/address/{addressId}")
+    @DeleteMapping("/addresses/{addressId}")
     public ResponseEntity<String> deleteAddress(
             @PathVariable("addressId") Long addressId
     ){

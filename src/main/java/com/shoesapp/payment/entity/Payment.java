@@ -2,6 +2,8 @@ package com.shoesapp.payment.entity;
 
 import com.shoesapp.order.entity.Order;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
@@ -15,5 +17,7 @@ public class Payment {
     @OneToOne(mappedBy = "payment", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Order order;
 
+    @NotBlank
+    @Size(min = 4, message = "Payment method must contain atleast 4 characters")
     private String paymentMethod;
 }

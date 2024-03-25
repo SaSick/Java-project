@@ -22,7 +22,7 @@ public class OrderController {
     private final OrderService orderService;
 
     @GetMapping("/orders")
-    public OrderResponse<Order> getAllProducts(
+    public OrderResponse<Order> getAllOrders(
             @RequestParam(required = false, defaultValue = "0") int page,
             @RequestParam(required = false, defaultValue = "10") int size
     )
@@ -37,7 +37,7 @@ public class OrderController {
         return orderResponse;
     }
 
-    @GetMapping("{emailId}/orders")
+    @GetMapping("/users/{emailId}/orders")
     public ResponseEntity<List<OrderDTO>> getAllOrdersByUser(
             @PathVariable("emailId") String emailId
     ){
@@ -45,7 +45,7 @@ public class OrderController {
         return new ResponseEntity<>(orderDTO, HttpStatus.FOUND);
     }
 
-    @GetMapping("{emailId}/orders/{orderId}")
+    @GetMapping("users/{emailId}/orders/{orderId}")
     public ResponseEntity<OrderDTO> getOrderByUser(
             @PathVariable("emailId") String email,
             @PathVariable("orderId") Long orderId
@@ -54,7 +54,7 @@ public class OrderController {
         return ResponseEntity.status(HttpStatus.FOUND).body(orderDTO);
     }
 
-    @PostMapping("{emailId}/carts/{cartId}/payments/{paymentMethod}/order")
+    @PostMapping("/users/{emailId}/carts/{cartId}/payments/{paymentMethod}/order")
     public ResponseEntity<OrderDTO> orderProducts(
             @PathVariable("emailId") String emailId,
             @PathVariable("cartId") Long cartId,
@@ -64,7 +64,7 @@ public class OrderController {
         return new ResponseEntity<>(orderDTO, HttpStatus.CREATED);
     }
 
-    @PutMapping("{emailId}/orders/{orderId}/orderStatus/{orderStatus}")
+    @PutMapping("/users/{emailId}/orders/{orderId}/orderStatus/{orderStatus}")
     public ResponseEntity<OrderDTO> updateOrderByUser(
             @PathVariable("emailId") String emailId,
             @PathVariable("orderId") Long orderId,

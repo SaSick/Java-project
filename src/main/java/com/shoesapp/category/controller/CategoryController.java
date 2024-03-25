@@ -3,6 +3,7 @@ package com.shoesapp.category.controller;
 import com.shoesapp.category.dto.CategoryDTO;
 import com.shoesapp.category.entity.Category;
 import com.shoesapp.category.service.CategoryService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,7 @@ public class CategoryController {
 
     @PostMapping("/category")
     public ResponseEntity<CategoryDTO> createCategory(
-            @RequestBody Category category
+           @Valid @RequestBody Category category
     ){
         CategoryDTO savedCategory = categoryService.createCategory(category);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedCategory);

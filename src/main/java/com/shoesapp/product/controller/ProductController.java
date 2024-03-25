@@ -4,6 +4,7 @@ import com.shoesapp.product.dto.ProductDTO;
 import com.shoesapp.product.dto.ProductResponse;
 import com.shoesapp.product.entity.Product;
 import com.shoesapp.product.service.ProductService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,26 +23,24 @@ public class ProductController {
     private final ProductService productService;
 
     @GetMapping("/products")
-    public ProductResponse<Product> getAllProducts(
+    public ProductResponse<ProductDTO> getAllProducts(
             @RequestParam(required = false, defaultValue = "0") int page,
             @RequestParam(required = false, defaultValue = "10") int size
-    )
-    {
-        Page <Product> pagedResponse = productService.getAllProducts(PageRequest.of(page, size));
+    ) {
+        Page<ProductDTO> pagedResponse = productService.getAllProducts(PageRequest.of(page, size));
 
-        ProductResponse<Product> productResponse = new ProductResponse<>();
-
+        ProductResponse<ProductDTO> productResponse = new ProductResponse<>();
         productResponse.setData(pagedResponse.getContent());
         productResponse.setTotal(pagedResponse.getTotalElements());
 
         return productResponse;
     }
 
-    @PostMapping("/{productId}/products")
+    @PostMapping("/categories/{categoryId}/product")
     public ResponseEntity<ProductDTO> addProduct(
-        @RequestBody ProductDTO productDTO, @PathVariable("productId") Long productId
+            @Valid @RequestBody ProductDTO productDTO, @PathVariable("categoryId") Long categoryId
     ){
-        ProductDTO createdProduct = productService.addProduct(productDTO, productId);
+        ProductDTO createdProduct = productService.addProduct(productDTO, categoryId);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdProduct);
     }
 
